@@ -1,0 +1,58 @@
+#include <stdio.h>
+
+int main(){
+    // Vetores para identificação de linhas e colunas
+    char linha[10] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+    
+    // 1. Criando o Tabuleiro (Matriz 10x10)
+    int tabuleiro[10][10];
+    
+    // 2. Inicializando o tabuleiro com água (valor 0)
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            tabuleiro[i][j] = 0;
+        }
+    }
+    
+    // 3. Posicionando o Navio HORIZONTAL (tamanho 3)
+    // Linha 3 (índice 2), colunas 4, 5, 6 (índices 3, 4, 5)
+    int navioHorizontal[3] = {3, 3, 3};
+    int linhaNavioH = 2;      // Linha C
+    int colunaNavioH = 3;     // Coluna 4
+    
+    for (int i = 0; i < 3; i++) {
+        tabuleiro[linhaNavioH][colunaNavioH + i] = navioHorizontal[i];
+    }
+    
+    // 4. Posicionando o Navio VERTICAL (tamanho 3)
+    // Linhas 6, 7, 8 (índices 5, 6, 7), coluna 8 (índice 7)
+    int navioVertical[3] = {3, 3, 3};
+    int linhaNavioV = 5;      // Linha F
+    int colunaNavioV = 7;     // Coluna 8
+    
+    for (int i = 0; i < 3; i++) {
+        tabuleiro[linhaNavioV + i][colunaNavioV] = navioVertical[i];
+    }
+    
+    // 5. Exibindo o Tabuleiro
+    printf("TABULEIRO BATALHA NAVAL\n");
+    
+    // Cabeçalho com as letras das linhas
+    printf("  ");
+    for (int j = 0; j < 10; j++) {
+        printf(" %c", linha[j]);
+    }
+    printf("\n");
+    
+    // Exibindo o tabuleiro linha por linha
+    for (int i = 0; i < 10; i++) {
+        printf("%2d", i + 1);  // Número da linha (1 a 10)
+        
+        for (int j = 0; j < 10; j++) {
+            printf(" %d", tabuleiro[i][j]);
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}
