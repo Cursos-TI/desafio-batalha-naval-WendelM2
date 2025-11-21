@@ -1,0 +1,198 @@
+#include <stdio.h>
+
+int main(){
+    // Vetores para identificação de linhas e colunas
+    char linha[10] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+    
+    // 1. Criando o Tabuleiro (Matriz 10x10)
+    int tabuleiro[10][10];
+    
+    // 2. Inicializando o tabuleiro com água (valor 0)
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            tabuleiro[i][j] = 0;
+        }
+    }
+    
+    // 3. Posicionando o Navio HORIZONTAL (tamanho 3)
+    int navioHorizontal[3] = {3, 3, 3};
+    int linhaNavioH = 2;      // Linha C
+    int colunaNavioH = 3;     // Coluna 4
+    
+    for (int i = 0; i < 3; i++) {
+        tabuleiro[linhaNavioH][colunaNavioH + i] = navioHorizontal[i];
+    }
+    
+    // 4. Posicionando o Navio VERTICAL (tamanho 3)
+    int navioVertical[3] = {3, 3, 3};
+    int linhaNavioV = 5;      // Linha F
+    int colunaNavioV = 7;     // Coluna 8
+    
+    for (int i = 0; i < 3; i++) {
+        tabuleiro[linhaNavioV + i][colunaNavioV] = navioVertical[i];
+    }
+    
+    // 5. Posicionando o Navio DIAGONAL DIREITA
+    int navioDiagonalDir[3] = {3, 3, 3};
+    int linhaDiagDir = 0;     // Linha A
+    int colunaDiagDir = 0;    // Coluna 1
+    
+    for (int i = 0; i < 3; i++) {
+        tabuleiro[linhaDiagDir + i][colunaDiagDir + i] = navioDiagonalDir[i];
+    }
+    
+    // 6. Posicionando o Navio DIAGONAL ESQUERDA
+    int navioDiagonalEsq[3] = {3, 3, 3};
+    int linhaDiagEsq = 0;     // Linha A
+    int colunaDiagEsq = 9;    // Coluna 10
+    
+    for (int i = 0; i < 3; i++) {
+        tabuleiro[linhaDiagEsq + i][colunaDiagEsq - i] = navioDiagonalEsq[i];
+    }
+    
+    // ===== CRIANDO AS MATRIZES DE HABILIDADES =====
+    
+    // 7. Matriz CONE (5x5) - expande para baixo
+    int habCone[5][5] = {0};
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            // Cone: começa com 1 elemento no topo, expande para baixo
+            // Distância do centro (coluna 2)
+            int distancia = (j - 2 < 0) ? (2 - j) : (j - 2);
+            
+            if (i >= distancia) {
+                habCone[i][j] = 1;
+            } else {
+                habCone[i][j] = 0;
+            }
+        }
+    }
+    
+    // 8. Matriz CRUZ (5x5) - forma de cruz no centro
+    int habCruz[5][5] = {0};
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            // Cruz: linha do meio (2) ou coluna do meio (2)
+            if (i == 2 || j == 2) {
+                habCruz[i][j] = 1;
+            } else {
+                habCruz[i][j] = 0;
+            }
+        }
+    }
+    
+    // 9. Matriz OCTAEDRO (5x5) - forma de losango
+    int habOctaedro[5][5] = {0};
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            // Octaedro (losango): |i-2| + |j-2| <= 2
+            int distanciaI = (i - 2 < 0) ? (2 - i) : (i - 2);
+            int distanciaJ = (j - 2 < 0) ? (2 - j) : (j - 2);
+            
+            if (distanciaI + distanciaJ <= 2) {
+                habOctaedro[i][j] = 1;
+            } else {
+                habOctaedro[i][j] = 0;
+            }
+        }
+    }
+    
+    // ===== PONTOS DE ORIGEM DAS HABILIDADES =====
+    int originCone_linha = 8;      // Linha I
+    int originCone_coluna = 2;     // Coluna C
+    
+    int originCruz_linha = 3;      // Linha D
+    int originCruz_coluna = 6;     // Coluna G
+    
+    int originOctaedro_linha = 1;  // Linha B
+    int originOctaedro_coluna = 8; // Coluna I
+    
+    // ===== APLICANDO HABILIDADE CONE =====
+    printf("Aplicando HABILIDADE CONE...\n");
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            int posLinha = originCone_linha - 2 + i;
+            int posColuna = originCone_coluna - 2 + j;
+            
+            // Verifica se está dentro dos limites do tabuleiro
+            if (posLinha >= 0 && posLinha < 10 && posColuna >= 0 && posColuna < 10) {
+                // Se a habilidade afeta (1) e não há navio (0)
+                if (habCone[i][j] == 1 && tabuleiro[posLinha][posColuna] == 0) {
+                    tabuleiro[posLinha][posColuna] = 5;  // 5 = área de efeito
+                }
+            }
+        }
+    }
+    
+    // ===== APLICANDO HABILIDADE CRUZ =====
+    printf("Aplicando HABILIDADE CRUZ...\n");
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            int posLinha = originCruz_linha - 2 + i;
+            int posColuna = originCruz_coluna - 2 + j;
+            
+            // Verifica se está dentro dos limites do tabuleiro
+            if (posLinha >= 0 && posLinha < 10 && posColuna >= 0 && posColuna < 10) {
+                // Se a habilidade afeta (1) e não há navio (0)
+                if (habCruz[i][j] == 1 && tabuleiro[posLinha][posColuna] == 0) {
+                    tabuleiro[posLinha][posColuna] = 5;  // 5 = área de efeito
+                }
+            }
+        }
+    }
+    
+    // ===== APLICANDO HABILIDADE OCTAEDRO =====
+    printf("Aplicando HABILIDADE OCTAEDRO...\n");
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            int posLinha = originOctaedro_linha - 2 + i;
+            int posColuna = originOctaedro_coluna - 2 + j;
+            
+            // Verifica se está dentro dos limites do tabuleiro
+            if (posLinha >= 0 && posLinha < 10 && posColuna >= 0 && posColuna < 10) {
+                // Se a habilidade afeta (1) e não há navio (0)
+                if (habOctaedro[i][j] == 1 && tabuleiro[posLinha][posColuna] == 0) {
+                    tabuleiro[posLinha][posColuna] = 5;  // 5 = área de efeito
+                }
+            }
+        }
+    }
+    
+    // ===== EXIBINDO O TABULEIRO COM HABILIDADES =====
+    printf("\n========== TABULEIRO COM HABILIDADES ==========\n\n");
+    
+    // Cabeçalho com as letras das linhas
+    printf("   ");
+    for (int j = 0; j < 10; j++) {
+        printf(" %c", linha[j]);
+    }
+    printf("\n");
+    
+    // Exibindo o tabuleiro linha por linha
+    for (int i = 0; i < 10; i++) {
+        printf("%2d ", i + 1);  // Número da linha (1 a 10)
+        
+        for (int j = 0; j < 10; j++) {
+            if (tabuleiro[i][j] == 0) {
+                printf(" ~");  // ~ = água
+            } else if (tabuleiro[i][j] == 3) {
+                printf(" #");  // # = navio
+            } else if (tabuleiro[i][j] == 5) {
+                printf(" *");  // * = área de efeito da habilidade
+            }
+        }
+        printf("\n");
+    }
+    
+    // ===== LEGENDA =====
+    printf("\n========== LEGENDA ==========\n");
+    printf("~  = Agua\n");
+    printf("#  = Navio\n");
+    printf("*  = Area de efeito da habilidade\n");
+    printf("\nHabilidades aplicadas:\n");
+    printf("1. CONE - Origem: %c%d\n", linha[originCone_linha], originCone_coluna + 1);
+    printf("2. CRUZ - Origem: %c%d\n", linha[originCruz_linha], originCruz_coluna + 1);
+    printf("3. OCTAEDRO - Origem: %c%d\n", linha[originOctaedro_linha], originOctaedro_coluna + 1);
+    
+    return 0;
+}
